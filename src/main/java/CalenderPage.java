@@ -2,13 +2,17 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.List;
 
 public class CalenderPage {
 
     private WebDriver driver;
     private Actions action;
+    private WebDriverWait wait;
 
     private By inputDateField = By.id("txtStartDate");
     private By prevButton = By.cssSelector("div[style=''] th[class='prev']");
@@ -17,15 +21,21 @@ public class CalenderPage {
     private By yearsList = By.xpath("//span[contains(@class, 'year')]");
     private String yearString = "//span[contains(@class, 'year') and (text()='%d')]";
     private By monthList = By.xpath("//span[contains(@class, 'month')]");
+    private String dayString = "//td[@class='day'][text()='%d']";
+
+    public String getDateValue() {
+        return driver.findElement(inputDateField).getAttribute("value");
+    }
 
     //Constructor
     public CalenderPage(WebDriver driver) {
         this.driver = driver;
         this.action = new Actions(driver);
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(8));
         action.scrollByAmount(0, 500).pause(300).perform();
     }
 
-    public void selectYear(int year) {
+    private void selectYear(int year) {
         driver.findElement(inputDateField).click();
         driver.findElement(switchButton).click();
         driver.findElement(switchButton).click();
@@ -46,7 +56,19 @@ public class CalenderPage {
         }
     }
 
-    public void selectMonth(int monthIndex) {
+    private void selectMonth(int monthIndex) {
+        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(monthList));
+        List<WebElement> monthElementsList = driver.findElements(monthList);
+        monthElementsList.get(monthIndex -1).click();
+    }
 
+    private void selectDay(int day){
+        driver.findElement(By.xpath(String.format(dayString, day))).click();
+    }
+
+    public void pickDate(int day, int month, int year) {
+        selectYear(year);
+        selectMonth(month);
+        selectDay(day);
     }
 }

@@ -3,6 +3,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertEquals;
+
 public class CalenderTest {
 
     private WebDriver driver;
@@ -17,7 +19,12 @@ public class CalenderTest {
     }
 
     @Test
-    public void testPickUpYear() {
-        calenderPage.selectYear(1994);
+    public void testDatePicker() {
+        int day = 1;
+        int month = 1;
+        int year = 1995;
+        calenderPage.pickDate(day, month, year);
+        System.out.println(calenderPage.getDateValue());
+        assertEquals(calenderPage.getDateValue(), String.format("%02d/%02d/%04d", month, day, year));
     }
 }
